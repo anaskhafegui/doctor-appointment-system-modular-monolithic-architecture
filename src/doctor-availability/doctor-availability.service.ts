@@ -1,32 +1,33 @@
 import { Injectable } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { CreateSlotDto } from './dto/create-slot.dto';
+import { Slot } from './entities/slot.entity';
+import { SlotRepository } from './slot.repository';
 
 @Injectable()
 export class DoctorAvailabilityService {
-  private slots = [];
+  constructor(private readonly slotRepository: SlotRepository) {}
 
   getAllSlots() {
-    return this.slots.filter((slot) => !slot.isReserved);
+    return this.slotRepository.findAll();
   }
 
-  createSlot(createSlotDto: CreateSlotDto) {
-    const newSlot = {
+  createSlot(createSlotDto: CreateSlotDto): Slot {
+    const newSlot: Slot = {
       ...createSlotDto,
       id: crypto.randomUUID(),
       isReserved: false,
     };
-    this.slots.push(newSlot);
-    return newSlot;
+    return this.slotRepository.create(newSlot);
   }
 
-  reserveSlot(id: string) {
-    const slot = this.slots.find((slot) => slot.id === id);
+  reserveSlot(id: string): Slot {
+    const slot = this.slotRepository.findById(id);
     if (!slot || slot.isReserved) throw new Error('Slot unavailable');
-    slot.isReserved = true;
-    return slot;
+    return this.slotRepository.update(id, { isReserved: true });
   }
 
-  deleteSlot(id: string) {
-    this.slots = this.slots.filter((slot) => slot.id !== id);
+  deleteSlot(id: string): void {
+    this.slotRepository.delete(id);
   }
 }

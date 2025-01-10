@@ -1,73 +1,201 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Doctor Appointment Management System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project is a backend system for managing doctor appointments, designed for a single doctor. It provides APIs to handle doctor availability, appointment booking, confirmation, and management, built with modular architecture using **NestJS**.
 
-## Description
+## Key Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Doctor Availability**: Manage and retrieve available slots.
+- **Appointment Booking**: Book appointments with validations.
+- **Appointment Confirmation**: Log appointment confirmations for patients and doctors.
+- **Doctor Appointment Management**: View, cancel, and complete appointments.
+
+## Architecture
+
+The application is structured using modular monolith principles, with each module following a specific architectural pattern:
+
+| Module                            | Architecture Pattern   | Responsibilities                              |
+| --------------------------------- | ---------------------- | --------------------------------------------- |
+| **Doctor Availability**           | Traditional Layered    | Manage and retrieve doctor's available slots. |
+| **Appointment Booking**           | Clean Architecture     | Book appointments with proper validations.    |
+| **Appointment Confirmation**      | Simplest Architecture  | Trigger notification confirmation events.     |
+| **Doctor Appointment Management** | Hexagonal Architecture | Manage appointments (view, cancel, complete). |
+
+---
+
+## Modules
+
+### 1. Doctor Availability Module
+
+**Responsibilities**:
+
+- Create, update, and delete available slots.
+- Fetch all available slots.
+
+**Architecture**: Traditional Layered Architecture.
+
+**API Endpoints**:
+
+| Method | Endpoint     | Description                   |
+| ------ | ------------ | ----------------------------- |
+| GET    | `/slots`     | Retrieve all available slots. |
+| POST   | `/slots`     | Create a new slot.            |
+| PATCH  | `/slots/:id` | Update a slot.                |
+| DELETE | `/slots/:id` | Delete a slot.                |
+
+---
+
+### 2. Appointment Booking Module
+
+**Responsibilities**:
+
+- Book appointments on available slots.
+- Validate bookings (e.g., slot must not be reserved, date must be in the future).
+
+**Architecture**: Clean Architecture.
+
+**API Endpoints**:
+
+| Method | Endpoint              | Description               |
+| ------ | --------------------- | ------------------------- |
+| GET    | `/appointments/slots` | Retrieve available slots. |
+| POST   | `/appointments`       | Book an appointment.      |
+
+---
+
+### 3. Appointment Confirmation Module
+
+**Responsibilities**:
+
+- Trigger notification confirmation events for appointments.
+
+**Architecture**: Simplest Architecture.
+
+**Implementation**:
+
+- This module no longer includes a controller.
+- A service handles the logic for triggering notification events.
+
+---
+
+### 4. Doctor Appointment Management Module
+
+**Responsibilities**:
+
+- View all appointments.
+- Cancel or complete appointments.
+
+**Architecture**: Hexagonal Architecture.
+
+**API Endpoints**:
+
+| Method | Endpoint                     | Description                   |
+| ------ | ---------------------------- | ----------------------------- |
+| GET    | `/appointments`              | View all appointments.        |
+| PATCH  | `/appointments/:id/cancel`   | Cancel an appointment.        |
+| PATCH  | `/appointments/:id/complete` | Mark an appointment complete. |
+
+---
 
 ## Installation
 
-```bash
-$ npm install
+1. Clone the repository:
+
+   ```bash
+   git clone <repository-url>
+   cd doctor-appointment-management
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Run the application:
+
+   ```bash
+   npm run start
+   ```
+
+4. Access the API at:
+
+   ```
+   http://localhost:3000
+   ```
+
+---
+
+## Folder Structure
+
+```
+src/
+├── doctor-availability/          # Handles doctor slot management
+│   ├── domain/
+│   ├── infrastructure/
+│   ├── doctor-availability.controller.ts
+│   ├── doctor-availability.service.ts
+│   ├── doctor-availability.module.ts
+├── appointment-booking/          # Handles appointment booking
+│   ├── core/
+│   ├── infrastructure/
+│   ├── appointment-booking.controller.ts
+│   ├── appointment-booking.module.ts
+├── appointment-confirmation/     # Handles confirmation events
+│   ├── appointment-confirmation.service.ts
+│   ├── appointment-confirmation.module.ts
+├── doctor-appointment-management/ # Handles appointment management
+│   ├── core/
+│   ├── shell/
+│   ├── doctor-appointment-management.module.ts
 ```
 
-## Running the app
+---
+
+## Development
+
+### Prerequisites
+
+- Node.js 16+
+- NestJS CLI
+- npm or yarn
+
+### Running Tests
+
+To run unit tests:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run test
 ```
 
-## Test
+To run e2e tests:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run test:e2e
 ```
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Future Enhancements
 
-## Stay in touch
+1. **Database Integration**:
+   - Replace in-memory repositories with a database (e.g., PostgreSQL, MongoDB).
+2. **Authentication**:
+   - Add authentication and authorization to secure APIs.
+3. **Notifications**:
+   - Replace confirmation logging with email or SMS notifications.
+4. **Event-Driven Architecture**:
+   - Use event-driven communication between modules for better decoupling.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
+
+## Contributing
+
+Contributions are welcome! Please submit a pull request or open an issue for discussion.
+
+---
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+This project is licensed under the MIT License.

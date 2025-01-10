@@ -3,4 +3,6 @@ export class CreateSlotDto {
   doctorId: string;
   doctorName: string;
   cost: number;
+  startTime: Date;
+  endTime: Date;
 }

@@ -1,16 +1,21 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Appointment } from '../../domain/appointment.entity';
 import { AppointmentRepositoryInterface } from '../../domain/appointment.repository.interface';
 
 @Injectable()
 export class BookAppointmentUseCase {
-  constructor(
-    @Inject('AppointmentRepositoryInterface')
-    private repository: AppointmentRepositoryInterface,
-  ) {}
+  constructor(private readonly repository: AppointmentRepositoryInterface) {}
 
   execute(appointmentDto: any): Appointment {
-    // Automatically validates upon instantiation
+    // Check if the slot exists and is not reserved
+    const slot = this.repository
+      .getAvailableSlots()
+      .find((s) => s.id === appointmentDto.slotId);
+    if (!slot || slot.isReserved) {
+      throw new Error('Slot is unavailable or already reserved.');
+    }
+
+    // Create an appointment (validated in the entity)
     const appointment = new Appointment(
       appointmentDto.id,
       appointmentDto.slotId,
@@ -19,15 +24,7 @@ export class BookAppointmentUseCase {
       new Date(appointmentDto.reservedAt),
     );
 
-    // Check if the slot is available
-    const slot = this.repository
-      .getAvailableSlots()
-      .find((s) => s.id === appointment.slotId);
-    if (!slot) {
-      throw new Error('Slot is unavailable or already reserved.');
-    }
-
-    // Book the appointment
+    // Save to the repository
     return this.repository.bookAppointment(appointment);
   }
 }

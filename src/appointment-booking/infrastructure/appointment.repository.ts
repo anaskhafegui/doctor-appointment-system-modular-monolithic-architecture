@@ -24,8 +24,8 @@ export class AppointmentRepository implements AppointmentRepositoryInterface {
 
   bookAppointment(appointment: Appointment): Appointment {
     const slot = this.slots.find((slot) => slot.id === appointment.slotId);
-    if (!slot || slot.isReserved) {
-      throw new Error('Slot is unavailable or already reserved');
+    if (!slot) {
+      throw new Error('Slot not found.');
     }
 
     slot.isReserved = true;

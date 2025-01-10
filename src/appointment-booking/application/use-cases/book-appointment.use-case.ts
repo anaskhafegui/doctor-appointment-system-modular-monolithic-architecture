@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Appointment } from '../../domain/appointment.entity';
 import { AppointmentRepositoryInterface } from '../../domain/appointment.repository.interface';
 
@@ -7,6 +8,7 @@ export class BookAppointmentUseCase {
   constructor(
     @Inject('AppointmentRepositoryInterface')
     private repository: AppointmentRepositoryInterface,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
   execute(appointmentDto: any): Appointment {
     // Check if the slot exists and is not reserved
@@ -18,7 +20,7 @@ export class BookAppointmentUseCase {
     }
 
     // Create an appointment (validated in the entity)
-    const appointment = new Appointment(
+    const appointmentDetails = new Appointment(
       appointmentDto.id,
       appointmentDto.slotId,
       appointmentDto.patientId,
@@ -26,7 +28,10 @@ export class BookAppointmentUseCase {
       new Date(appointmentDto.reservedAt),
     );
 
+    // Emit confirmation event
+    this.eventEmitter.emit('appointment.booked', appointmentDetails);
+
     // Save to the repository
-    return this.repository.bookAppointment(appointment);
+    return this.repository.bookAppointment(appointmentDetails);
   }
 }

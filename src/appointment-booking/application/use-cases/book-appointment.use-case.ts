@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Appointment } from '../../domain/appointment.entity';
 import { AppointmentRepositoryInterface } from '../../domain/appointment.repository.interface';
 
 @Injectable()
 export class BookAppointmentUseCase {
-  constructor(private readonly repository: AppointmentRepositoryInterface) {}
-
+  constructor(
+    @Inject('AppointmentRepositoryInterface')
+    private repository: AppointmentRepositoryInterface,
+  ) {}
   execute(appointmentDto: any): Appointment {
     // Check if the slot exists and is not reserved
     const slot = this.repository

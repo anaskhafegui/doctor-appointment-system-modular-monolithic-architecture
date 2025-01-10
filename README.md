@@ -187,6 +187,10 @@ npm run test:e2e
    - Replace confirmation logging with email or SMS notifications.
 4. **Event-Driven Architecture**:
    - Use event-driven communication between modules for better decoupling.
+5. **Separation of NestJS Libraries**:
+   - Explore ways to separate `@nestjs` dependencies from the business domain to create a more domain-centric architecture.
+6. **DTO Mapping**:
+   - Implement separate DTOs for request and response objects, distinct from repository and business domain models, and use mappers to map between them.
 
 ---
 

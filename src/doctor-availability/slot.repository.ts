@@ -6,9 +6,11 @@ export class SlotRepository {
   private slots: Slot[] = [
     {
       id: 'dummy-slot-id',
-      startTime: new Date('2023-10-01T09:00:00Z'),
-      endTime: new Date('2023-10-01T10:00:00Z'),
       isReserved: false,
+      time: new Date(),
+      doctorId: 'dummy-doctor-id',
+      doctorName: 'Anas',
+      cost: 1000,
     },
   ];
 

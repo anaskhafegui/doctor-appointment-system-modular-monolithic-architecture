@@ -1,21 +1,21 @@
 export class Appointment {
   id: string;
   slotId: string;
-  doctorId: string;
   patientId: string;
+  patientName: string;
   reservedAt: Date;
 
   constructor(
     id: string,
     slotId: string,
-    doctorId: string,
     patientId: string,
+    patientName: string,
     reservedAt: Date,
   ) {
     this.id = id;
-    this.doctorId = doctorId;
-    this.patientId = patientId;
     this.slotId = slotId;
+    this.patientId = patientId;
+    this.patientName = patientName;
     this.reservedAt = reservedAt;
 
     this.validateReservedAt();

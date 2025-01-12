@@ -34,7 +34,7 @@ describe('DoctorAvailabilityService', () => {
   });
 
   describe('getAllSlots', () => {
-    it('should return all available slots', async () => {
+    it('should return all slots', () => {
       const slots: Slot[] = [
         {
           id: '1',
@@ -44,15 +44,47 @@ describe('DoctorAvailabilityService', () => {
           isReserved: false,
           cost: 100,
         },
+        {
+          id: '2',
+          time: new Date(),
+          doctorId: 'doc2',
+          doctorName: 'Dr. John',
+          isReserved: true,
+          cost: 200,
+        },
       ];
       jest.spyOn(repository, 'findAll').mockReturnValue(slots);
 
       expect(service.getAllSlots()).toEqual(slots);
     });
+
+    it('should return available slots if isAvailable is true', () => {
+      const slots: Slot[] = [
+        {
+          id: '1',
+          time: new Date(),
+          doctorId: 'doc1',
+          doctorName: 'Dr. Smith',
+          isReserved: false,
+          cost: 100,
+        },
+        {
+          id: '2',
+          time: new Date(),
+          doctorId: 'doc2',
+          doctorName: 'Dr. John',
+          isReserved: true,
+          cost: 200,
+        },
+      ];
+      jest.spyOn(repository, 'findAll').mockReturnValue([slots[0]]);
+
+      expect(service.getAllSlots(true)).toEqual([slots[0]]);
+    });
   });
 
   describe('createSlot', () => {
-    it('should create a new slot', async () => {
+    it('should create a new slot', () => {
       const createSlotDto: CreateSlotDto = {
         doctorId: 'doc1',
         doctorName: 'Dr. Smith',
@@ -71,7 +103,7 @@ describe('DoctorAvailabilityService', () => {
   });
 
   describe('reserveSlot', () => {
-    it('should reserve a slot', async () => {
+    it('should reserve a slot', () => {
       const slot: Slot = {
         id: '1',
         time: new Date(),
@@ -88,13 +120,13 @@ describe('DoctorAvailabilityService', () => {
       expect(service.reserveSlot('1')).toEqual({ ...slot, isReserved: true });
     });
 
-    it('should throw an error if slot is not found', async () => {
+    it('should throw an error if slot is not found', () => {
       jest.spyOn(repository, 'findById').mockReturnValue(undefined);
 
-      expect(() => service.reserveSlot('1')).toThrow('Slot unavailable');
+      expect(() => service.reserveSlot('1')).toThrow('Slot not found.');
     });
 
-    it('should throw an error if slot is already reserved', async () => {
+    it('should throw an error if slot is already reserved', () => {
       const slot: Slot = {
         id: '1',
         time: new Date(),
@@ -105,12 +137,14 @@ describe('DoctorAvailabilityService', () => {
       };
       jest.spyOn(repository, 'findById').mockReturnValue(slot);
 
-      expect(() => service.reserveSlot('1')).toThrow('Slot unavailable');
+      expect(() => service.reserveSlot('1')).toThrow(
+        'Slot is already reserved.',
+      );
     });
   });
 
   describe('deleteSlot', () => {
-    it('should delete a slot', async () => {
+    it('should delete a slot', () => {
       jest.spyOn(repository, 'delete').mockImplementation();
 
       expect(() => service.deleteSlot('1')).not.toThrow();

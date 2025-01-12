@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AppointmentRepositoryInterface } from '../../domain/appointment.repository.interface';
+import { SlotServiceInterface } from '../../contracts/slot.service.interface';
+import { Slot } from '../../domain/slot.entity';
 @Injectable()
 export class GetAvailableSlotsUseCase {
   constructor(
-    @Inject('AppointmentRepositoryInterface')
-    private repository: AppointmentRepositoryInterface,
+    @Inject('SlotServiceInterface')
+    private readonly slotService: SlotServiceInterface,
   ) {}
 
-  execute() {
-    return this.repository.getAvailableSlots();
+  execute(): Slot[] {
+    return this.slotService.getAvailableSlots(true);
   }
 }

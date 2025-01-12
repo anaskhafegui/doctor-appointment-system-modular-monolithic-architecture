@@ -14,8 +14,11 @@ export class SlotRepository {
     },
   ];
 
-  findAll(): Slot[] {
-    return this.slots.filter((slot) => !slot.isReserved);
+  findAll(isAvailable?: boolean): Slot[] {
+    if (!isAvailable) {
+      return this.slots;
+    }
+    return this.slots.filter((slot) => slot.isReserved !== isAvailable);
   }
 
   findById(id: string): Slot | undefined {

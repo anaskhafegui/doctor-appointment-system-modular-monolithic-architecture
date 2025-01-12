@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { DoctorAvailabilityService } from './doctor-availability.service';
 import { CreateSlotDto } from './dto/create-slot.dto';
@@ -15,8 +16,14 @@ export class DoctorAvailabilityController {
   constructor(private readonly service: DoctorAvailabilityService) {}
 
   @Get()
-  getAllSlots() {
-    return this.service.getAllSlots();
+  getAllSlots(@Query('isAvailable') isAvailable?: string) {
+    const isAvailableBool =
+      isAvailable === 'true'
+        ? true
+        : isAvailable === 'false'
+          ? false
+          : undefined;
+    return this.service.getAllSlots(isAvailableBool);
   }
 
   @Post()

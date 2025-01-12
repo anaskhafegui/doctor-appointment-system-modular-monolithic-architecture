@@ -8,8 +8,8 @@ import { SlotRepository } from './slot.repository';
 export class DoctorAvailabilityService {
   constructor(private readonly slotRepository: SlotRepository) {}
 
-  getAllSlots() {
-    return this.slotRepository.findAll();
+  getAllSlots(isAvailable?: boolean): Slot[] {
+    return this.slotRepository.findAll(isAvailable);
   }
 
   createSlot(createSlotDto: CreateSlotDto): Slot {
@@ -24,7 +24,12 @@ export class DoctorAvailabilityService {
 
   reserveSlot(id: string): Slot {
     const slot = this.slotRepository.findById(id);
-    if (!slot || slot.isReserved) throw new Error('Slot unavailable');
+    if (!slot) {
+      throw new Error('Slot not found.');
+    }
+    if (slot.isReserved) {
+      throw new Error('Slot is already reserved.');
+    }
     return this.slotRepository.update(id, { isReserved: true });
   }
 

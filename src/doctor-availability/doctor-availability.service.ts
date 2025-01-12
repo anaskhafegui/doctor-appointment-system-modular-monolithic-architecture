@@ -17,6 +17,7 @@ export class DoctorAvailabilityService {
       ...createSlotDto,
       id: crypto.randomUUID(),
       isReserved: false,
+      time: new Date(),
     };
     return this.slotRepository.create(newSlot);
   }

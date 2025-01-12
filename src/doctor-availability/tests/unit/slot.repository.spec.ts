@@ -1,5 +1,5 @@
-import { Slot } from './entities/slot.entity';
-import { SlotRepository } from './slot.repository';
+import { Slot } from '../../entities/slot.entity';
+import { SlotRepository } from '../../slot.repository';
 
 describe('SlotRepository', () => {
   let repository: SlotRepository;

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DoctorAvailabilityService } from './doctor-availability.service';
-import { CreateSlotDto } from './dto/create-slot.dto';
-import { Slot } from './entities/slot.entity';
-import { SlotRepository } from './slot.repository';
+import { DoctorAvailabilityService } from '../../doctor-availability.service';
+import { CreateSlotDto } from '../../dto/create-slot.dto';
+import { Slot } from '../../entities/slot.entity';
+import { SlotRepository } from '../../slot.repository';
 
 describe('DoctorAvailabilityService', () => {
   let service: DoctorAvailabilityService;

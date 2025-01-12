@@ -8,6 +8,80 @@ describe('SlotRepository', () => {
     repository = new SlotRepository();
   });
 
+  describe('findAll', () => {
+    it('should return all slots if isAvailable is not provided', () => {
+      const slots: Slot[] = [
+        {
+          id: '1',
+          time: new Date(),
+          doctorId: 'doc1',
+          doctorName: 'Dr. Smith',
+          isReserved: false,
+          cost: 100,
+        },
+        {
+          id: '2',
+          time: new Date(),
+          doctorId: 'doc2',
+          doctorName: 'Dr. John',
+          isReserved: true,
+          cost: 200,
+        },
+      ];
+      repository['slots'] = slots;
+
+      expect(repository.findAll()).toEqual(slots);
+    });
+
+    it('should return available slots if isAvailable is true', () => {
+      const slots: Slot[] = [
+        {
+          id: '1',
+          time: new Date(),
+          doctorId: 'doc1',
+          doctorName: 'Dr. Smith',
+          isReserved: false,
+          cost: 100,
+        },
+        {
+          id: '2',
+          time: new Date(),
+          doctorId: 'doc2',
+          doctorName: 'Dr. John',
+          isReserved: true,
+          cost: 200,
+        },
+      ];
+      repository['slots'] = slots;
+
+      expect(repository.findAll(true)).toEqual([slots[0]]);
+    });
+
+    it('should return reserved slots if isAvailable is false', () => {
+      const slots: Slot[] = [
+        {
+          id: '1',
+          time: new Date(),
+          doctorId: 'doc1',
+          doctorName: 'Dr. Smith',
+          isReserved: false,
+          cost: 100,
+        },
+        {
+          id: '2',
+          time: new Date(),
+          doctorId: 'doc2',
+          doctorName: 'Dr. John',
+          isReserved: true,
+          cost: 200,
+        },
+      ];
+      repository['slots'] = slots;
+
+      expect(repository.findAll(false)).toEqual(slots);
+    });
+  });
+
   describe('findById', () => {
     it('should return a slot by id', () => {
       const slot: Slot = {

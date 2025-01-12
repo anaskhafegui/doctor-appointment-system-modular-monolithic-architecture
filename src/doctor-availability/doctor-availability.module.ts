@@ -5,5 +5,6 @@ import { SlotRepository } from './slot.repository';
 @Module({
   controllers: [DoctorAvailabilityController],
   providers: [DoctorAvailabilityService, SlotRepository],
+  exports: [DoctorAvailabilityService],
 })
 export class DoctorAvailabilityModule {}

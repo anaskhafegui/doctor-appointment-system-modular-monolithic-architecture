@@ -7,8 +7,8 @@ import { SlotServiceInterface } from '../contracts/slot.service.interface';
 export class SlotServiceAdapter implements SlotServiceInterface {
   constructor(private readonly slotService: DoctorAvailabilityService) {}
 
-  getAvailableSlots(isAvailable?: boolean): Slot[] {
-    return this.slotService.getAllSlots(isAvailable);
+  getAvailableSlots(): Slot[] {
+    return this.slotService.getAllSlots(true);
   }
 
   reserveSlot(slotId: string): void {

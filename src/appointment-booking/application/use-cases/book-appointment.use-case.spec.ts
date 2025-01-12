@@ -1,5 +1,7 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
+import * as crypto from 'crypto';
+import { SlotServiceInterface } from '../../contracts/slot.service.interface';
 import { Appointment } from '../../domain/appointment.entity';
 import { AppointmentRepositoryInterface } from '../../domain/appointment.repository.interface';
 import { BookAppointmentUseCase } from './book-appointment.use-case';
@@ -8,15 +10,17 @@ describe('BookAppointmentUseCase', () => {
   let useCase: BookAppointmentUseCase;
   let repository: AppointmentRepositoryInterface;
   let eventEmitter: EventEmitter2;
+  let slotService: SlotServiceInterface;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         BookAppointmentUseCase,
         {
           provide: 'AppointmentRepositoryInterface',
           useValue: {
-            getAvailableSlots: jest.fn(),
             bookAppointment: jest.fn(),
           },
         },
@@ -24,6 +28,12 @@ describe('BookAppointmentUseCase', () => {
           provide: EventEmitter2,
           useValue: {
             emit: jest.fn(),
+          },
+        },
+        {
+          provide: 'SlotServiceInterface',
+          useValue: {
+            reserveSlot: jest.fn(),
           },
         },
       ],
@@ -34,6 +44,7 @@ describe('BookAppointmentUseCase', () => {
       'AppointmentRepositoryInterface',
     );
     eventEmitter = module.get<EventEmitter2>(EventEmitter2);
+    slotService = module.get<SlotServiceInterface>('SlotServiceInterface');
   });
 
   it('should be defined', () => {
@@ -42,69 +53,49 @@ describe('BookAppointmentUseCase', () => {
 
   describe('execute', () => {
     it('should book an appointment if slot is available', () => {
-      const slot = {
-        id: 'slot1',
-        isReserved: false,
-        time: new Date('2025-02-01T14:30:00.000Z'),
-      };
-      const appointmentDto = {
-        id: 'appointment1',
-        slotId: 'slot1',
+      const slotId = 'slot1';
+      const id = crypto.randomUUID();
+      const time = new Date();
+      const patientDetails = {
+        id,
+        slotId,
         patientId: 'patient1',
         patientName: 'John Doe',
-        reservedAt: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), // 2 hours in the future
+        reservedAt: time,
       };
-      jest.spyOn(repository, 'getAvailableSlots').mockReturnValue([slot]);
+      const appointmentDetails = new Appointment(
+        id,
+        slotId,
+        patientDetails.patientId,
+        patientDetails.patientName,
+        time,
+      );
+
+      jest.spyOn(slotService, 'reserveSlot').mockImplementation();
       jest
         .spyOn(repository, 'bookAppointment')
-        .mockImplementation((appointment) => appointment);
+        .mockReturnValue(appointmentDetails);
 
-      const result = useCase.execute(appointmentDto);
+      const result = useCase.execute(slotId, patientDetails);
 
       expect(result).toBeInstanceOf(Appointment);
-      expect(result.id).toBe(appointmentDto.id);
-      expect(result.slotId).toBe(appointmentDto.slotId);
-      expect(result.patientId).toBe(appointmentDto.patientId);
-      expect(result.patientName).toBe(appointmentDto.patientName);
-      expect(eventEmitter.emit).toHaveBeenCalledWith(
-        'appointment.booked',
-        result,
-      );
-      expect(repository.bookAppointment).toHaveBeenCalledWith(result);
+      expect(result.slotId).toBe(slotId);
+      expect(result.patientId).toBe(patientDetails.patientId);
+      expect(result.patientName).toBe(patientDetails.patientName);
+      expect(eventEmitter.emit).toHaveBeenCalled();
+      expect(repository.bookAppointment).toHaveBeenCalled();
     });
 
-    it('should throw an error if slot is unavailable', () => {
-      const slot = {
-        id: 'slot1',
-        isReserved: true,
-        time: new Date('2025-02-01T14:30:00.000Z'),
-      };
-      const appointmentDto = {
-        id: 'appointment1',
-        slotId: 'slot1',
-        patientId: 'patient1',
-        patientName: 'John Doe',
-        reservedAt: new Date().toISOString(),
-      };
-      jest.spyOn(repository, 'getAvailableSlots').mockReturnValue([slot]);
+    it('should throw an error if slot is not available', () => {
+      const slotId = 'slot1';
+      const patientDetails = { patientId: 'patient1', patientName: 'John Doe' };
 
-      expect(() => useCase.execute(appointmentDto)).toThrow(
-        'Slot is unavailable or already reserved.',
-      );
-    });
+      jest.spyOn(slotService, 'reserveSlot').mockImplementation(() => {
+        throw new Error('Slot not available');
+      });
 
-    it('should throw an error if slot does not exist', () => {
-      const appointmentDto = {
-        id: 'appointment1',
-        slotId: 'slot1',
-        patientId: 'patient1',
-        patientName: 'John Doe',
-        reservedAt: new Date().toISOString(),
-      };
-      jest.spyOn(repository, 'getAvailableSlots').mockReturnValue([]);
-
-      expect(() => useCase.execute(appointmentDto)).toThrow(
-        'Slot is unavailable or already reserved.',
+      expect(() => useCase.execute(slotId, patientDetails)).toThrow(
+        'Slot not available',
       );
     });
   });

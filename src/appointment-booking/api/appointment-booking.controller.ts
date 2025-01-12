@@ -16,6 +16,9 @@ export class AppointmentBookingController {
 
   @Post()
   async createAppointment(@Body() appointmentDto: any) {
-    return this.bookAppointment.execute(appointmentDto);
+    return this.bookAppointment.execute(
+      appointmentDto.slotId,
+      appointmentDto.patientDetails,
+    );
   }
 }

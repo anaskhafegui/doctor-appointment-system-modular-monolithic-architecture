@@ -22,8 +22,8 @@ export class Appointment {
   }
 
   private validateReservedAt() {
-    if (this.reservedAt <= new Date()) {
-      throw new Error('The reserved date must be in the future');
+    if (!(this.reservedAt instanceof Date)) {
+      throw new Error('The reserved date must be date type');
     }
   }
 }

@@ -7,7 +7,24 @@ export class SlotRepository {
     {
       id: 'dummy-slot-id',
       isReserved: false,
-      time: new Date(),
+      time: new Date('2025-01-12T16:05:37.381Z'),
+      doctorId: 'dummy-doctor-id',
+      doctorName: 'Anas',
+      cost: 1000,
+    },
+
+    {
+      id: 'slot1',
+      time: new Date('2025-02-01T14:30:00.000Z'),
+      isReserved: true,
+      doctorId: 'dummy-doctor-id',
+      doctorName: 'Anas',
+      cost: 1000,
+    },
+    {
+      id: 'slot2',
+      time: new Date('2025-02-01T15:30:00.000Z'),
+      isReserved: false,
       doctorId: 'dummy-doctor-id',
       doctorName: 'Anas',
       cost: 1000,

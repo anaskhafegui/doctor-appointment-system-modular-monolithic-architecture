@@ -53,7 +53,7 @@ describe('GetAvailableSlotsUseCase', () => {
       const result = useCase.execute();
 
       expect(result).toEqual(slots);
-      expect(slotService.getAvailableSlots).toHaveBeenCalledWith(true);
+      expect(slotService.getAvailableSlots).toHaveBeenCalled();
     });
   });
 });

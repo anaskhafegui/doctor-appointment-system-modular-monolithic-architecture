@@ -9,6 +9,6 @@ export class GetAvailableSlotsUseCase {
   ) {}
 
   execute(): Slot[] {
-    return this.slotService.getAvailableSlots(true);
+    return this.slotService.getAvailableSlots();
   }
 }

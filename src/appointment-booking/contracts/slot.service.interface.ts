@@ -1,6 +1,6 @@
 import { Slot } from '../domain/slot.entity';
 
 export interface SlotServiceInterface {
-  getAvailableSlots(isAvailable?: boolean): Slot[];
+  getAvailableSlots(): Slot[];
   reserveSlot(slotId: string): void;
 }

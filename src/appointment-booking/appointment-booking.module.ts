@@ -20,6 +20,7 @@ import { AppointmentRepository } from './infrastructure/appointment.repository';
     MarkAsCompletedUseCase,
     BookAppointmentUseCase,
     GetAvailableSlotsUseCase,
+    AppointmentBookingFacade,
     {
       provide: 'AppointmentRepositoryInterface', // Bind interface to implementation
       useClass: AppointmentRepository,
@@ -29,6 +30,11 @@ import { AppointmentRepository } from './infrastructure/appointment.repository';
       useClass: SlotServiceAdapter, // Use the adapter directly
     },
   ],
-  exports: [AppointmentBookingFacade],
+  exports: [
+    AppointmentBookingFacade,
+    GetUpcomingAppointmentsUseCase,
+    MarkAsCompletedUseCase,
+    CancelAppointmentUseCase,
+  ],
 })
 export class AppointmentBookingModule {}

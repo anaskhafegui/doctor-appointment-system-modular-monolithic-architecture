@@ -5,12 +5,19 @@ import { DoctorAvailabilityModule } from '../doctor-availability/doctor-availabi
 import { SlotServiceAdapter } from './adapters/slot-service.adapter';
 import { AppointmentBookingController } from './api/appointment-booking.controller';
 import { GetAvailableSlotsUseCase } from './application//use-cases/get-available-slots.use-case';
+import { AppointmentBookingFacade } from './application/appointment-booking.facade';
 import { BookAppointmentUseCase } from './application/use-cases/book-appointment.use-case';
+import { CancelAppointmentUseCase } from './application/use-cases/cancel-appointment.use-case';
+import { GetUpcomingAppointmentsUseCase } from './application/use-cases/get-upcoming-appointment.use-case';
+import { MarkAsCompletedUseCase } from './application/use-cases/mark-as-completed.use-case';
 import { AppointmentRepository } from './infrastructure/appointment.repository';
 @Module({
   imports: [DoctorAvailabilityModule, EventEmitterModule.forRoot()],
   controllers: [AppointmentBookingController],
   providers: [
+    GetUpcomingAppointmentsUseCase,
+    CancelAppointmentUseCase,
+    MarkAsCompletedUseCase,
     BookAppointmentUseCase,
     GetAvailableSlotsUseCase,
     {
@@ -22,5 +29,6 @@ import { AppointmentRepository } from './infrastructure/appointment.repository';
       useClass: SlotServiceAdapter, // Use the adapter directly
     },
   ],
+  exports: [AppointmentBookingFacade],
 })
 export class AppointmentBookingModule {}

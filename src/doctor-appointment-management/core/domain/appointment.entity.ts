@@ -1,26 +1,31 @@
 export class Appointment {
+  id: string;
+  slotId: string;
+  patientId: string;
+  patientName: string;
+  reservedAt: Date;
+  status?: AppointmentStatus;
+
   constructor(
-    public id: string,
-    public slotId: string,
-    public patientId: string,
-    public patientName: string,
-    public reservedAt: Date,
-    public status: 'scheduled' | 'completed' | 'canceled' = 'scheduled',
-  ) {}
-
-  markAsCompleted() {
-    if (this.status !== 'scheduled') {
-      throw new Error(
-        'Only scheduled appointments can be marked as completed.',
-      );
-    }
-    this.status = 'completed';
+    id: string,
+    slotId: string,
+    patientId: string,
+    patientName: string,
+    reservedAt: Date,
+    status?: AppointmentStatus,
+  ) {
+    this.id = id;
+    this.status = this.status;
+    this.slotId = slotId;
+    this.patientId = patientId;
+    this.patientName = patientName;
+    this.reservedAt = reservedAt;
+    this.status = status || AppointmentStatus.UPCOMING;
   }
+}
 
-  cancel() {
-    if (this.status !== 'scheduled') {
-      throw new Error('Only scheduled appointments can be canceled.');
-    }
-    this.status = 'canceled';
-  }
+export enum AppointmentStatus {
+  UPCOMING = 'CONFIRMED',
+  CANCELLED = 'CANCELLED',
+  COMPLETED = 'COMPLETED',
 }

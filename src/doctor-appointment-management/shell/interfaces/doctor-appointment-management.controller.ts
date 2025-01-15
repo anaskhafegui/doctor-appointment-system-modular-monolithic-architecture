@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Patch } from '@nestjs/common';
-import { AppointmentManagementService } from '../../core/application/appointment-management.service';
+import { AppointmentManagementService } from '../../core/inputports/appointment-management.service';
 
 @Controller('appointments')
 export class DoctorAppointmentManagementController {

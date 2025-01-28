@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { IEmitter } from '../../contracts/IEmitter';
 import { SlotServiceInterface } from '../../contracts/slot.service.interface';
 import { Appointment } from '../../domain/appointment.entity';
 import { AppointmentRepositoryInterface } from '../../domain/appointment.repository.interface';
@@ -11,7 +11,8 @@ export class BookAppointmentUseCase {
     private readonly slotService: SlotServiceInterface,
     @Inject('AppointmentRepositoryInterface')
     private appointmentRepository: AppointmentRepositoryInterface,
-    private readonly eventEmitter: EventEmitter2,
+    @Inject('IEmitter')
+    private readonly eventEmitter: IEmitter,
   ) {}
   execute(
     slotId: string,

@@ -1,6 +1,6 @@
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as crypto from 'crypto';
+import { IEmitter } from '../../contracts/IEmitter';
 import { SlotServiceInterface } from '../../contracts/slot.service.interface';
 import { Appointment } from '../../domain/appointment.entity';
 import { AppointmentRepositoryInterface } from '../../domain/appointment.repository.interface';
@@ -9,7 +9,7 @@ import { BookAppointmentUseCase } from './book-appointment.use-case';
 describe('BookAppointmentUseCase', () => {
   let useCase: BookAppointmentUseCase;
   let repository: AppointmentRepositoryInterface;
-  let eventEmitter: EventEmitter2;
+  let eventEmitter: IEmitter;
   let slotService: SlotServiceInterface;
 
   beforeEach(async () => {
@@ -25,7 +25,7 @@ describe('BookAppointmentUseCase', () => {
           },
         },
         {
-          provide: EventEmitter2,
+          provide: 'IEmitter',
           useValue: {
             emit: jest.fn(),
           },
@@ -43,7 +43,7 @@ describe('BookAppointmentUseCase', () => {
     repository = module.get<AppointmentRepositoryInterface>(
       'AppointmentRepositoryInterface',
     );
-    eventEmitter = module.get<EventEmitter2>(EventEmitter2);
+    eventEmitter = module.get<IEmitter>('IEmitter');
     slotService = module.get<SlotServiceInterface>('SlotServiceInterface');
   });
 

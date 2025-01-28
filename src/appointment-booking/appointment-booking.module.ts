@@ -11,6 +11,7 @@ import { CancelAppointmentUseCase } from './application/use-cases/cancel-appoint
 import { GetUpcomingAppointmentsUseCase } from './application/use-cases/get-upcoming-appointment.use-case';
 import { MarkAsCompletedUseCase } from './application/use-cases/mark-as-completed.use-case';
 import { AppointmentRepository } from './infrastructure/appointment.repository';
+import { Emitter } from './infrastructure/Emitter';
 @Module({
   imports: [DoctorAvailabilityModule, EventEmitterModule.forRoot()],
   controllers: [AppointmentBookingController],
@@ -21,6 +22,10 @@ import { AppointmentRepository } from './infrastructure/appointment.repository';
     BookAppointmentUseCase,
     GetAvailableSlotsUseCase,
     AppointmentBookingFacade,
+    {
+      provide: 'IEmitter', // Bind interface to implementation
+      useClass: Emitter,
+    },
     {
       provide: 'AppointmentRepositoryInterface', // Bind interface to implementation
       useClass: AppointmentRepository,
